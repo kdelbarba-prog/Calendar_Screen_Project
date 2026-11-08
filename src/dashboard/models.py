@@ -9,6 +9,23 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validato
 
 EventStatus = Literal["normal", "tentative", "declined"]
 SourceState = Literal["ok", "stale", "error"]
+WeatherIconKey = Literal[
+    "clear",
+    "clear_day",
+    "clear_night",
+    "sunny",
+    "partly_cloudy",
+    "partly_cloudy_day",
+    "partly_cloudy_night",
+    "cloudy",
+    "fog",
+    "rain",
+    "showers",
+    "snow",
+    "thunderstorm",
+    "windy",
+    "unknown",
+]
 
 
 class StrictModel(BaseModel):
@@ -73,7 +90,7 @@ class CurrentWeather(StrictModel):
     temp: float
     feels_like: float | None
     condition: str
-    icon_key: str
+    icon_key: WeatherIconKey
     precip_chance: int | None
 
 
@@ -83,7 +100,7 @@ class TodayWeather(StrictModel):
     hi: float | None
     lo: float | None
     precip_chance: int | None
-    icon_key: str
+    icon_key: WeatherIconKey
 
 
 class HourlyForecast(StrictModel):
@@ -92,7 +109,7 @@ class HourlyForecast(StrictModel):
     time: AwareDatetime
     temp: float
     precip_chance: int | None
-    icon_key: str
+    icon_key: WeatherIconKey
 
 
 class DailyForecast(StrictModel):
@@ -102,7 +119,7 @@ class DailyForecast(StrictModel):
     hi: float | None
     lo: float | None
     precip_chance: int | None
-    icon_key: str
+    icon_key: WeatherIconKey
 
 
 class WeatherAlert(StrictModel):

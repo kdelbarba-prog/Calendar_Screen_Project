@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "periods": [
+      {"startTime": "2026-11-08T06:00:00-06:00", "isDaytime": true, "temperature": 51, "probabilityOfPrecipitation": {"value": 20}, "shortForecast": "Partly Cloudy"},
+      {"startTime": "2026-11-08T18:00:00-06:00", "isDaytime": false, "temperature": 36, "probabilityOfPrecipitation": {"value": 10}, "shortForecast": "Clear"},
+      {"startTime": "2026-11-09T06:00:00-06:00", "isDaytime": true, "temperature": 52, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Sunny"},
+      {"startTime": "2026-11-09T18:00:00-06:00", "isDaytime": false, "temperature": 37, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Clear"},
+      {"startTime": "2026-11-10T06:00:00-06:00", "isDaytime": true, "temperature": 49, "probabilityOfPrecipitation": {"value": 30}, "shortForecast": "Rain"},
+      {"startTime": "2026-11-10T18:00:00-06:00", "isDaytime": false, "temperature": 35, "probabilityOfPrecipitation": {"value": 40}, "shortForecast": "Rain"},
+      {"startTime": "2026-11-11T06:00:00-06:00", "isDaytime": true, "temperature": 46, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Cloudy"},
+      {"startTime": "2026-11-11T18:00:00-06:00", "isDaytime": false, "temperature": 33, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Cloudy"},
+      {"startTime": "2026-11-12T06:00:00-06:00", "isDaytime": true, "temperature": 44, "probabilityOfPrecipitation": {"value": 5}, "shortForecast": "Snow"},
+      {"startTime": "2026-11-12T18:00:00-06:00", "isDaytime": false, "temperature": 30, "probabilityOfPrecipitation": {"value": 10}, "shortForecast": "Snow"},
+      {"startTime": "2026-11-13T06:00:00-06:00", "isDaytime": true, "temperature": 43, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Mostly Sunny"},
+      {"startTime": "2026-11-13T18:00:00-06:00", "isDaytime": false, "temperature": 29, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Clear"},
+      {"startTime": "2026-11-14T06:00:00-06:00", "isDaytime": true, "temperature": 45, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Sunny"},
+      {"startTime": "2026-11-14T18:00:00-06:00", "isDaytime": false, "temperature": 31, "probabilityOfPrecipitation": {"value": 0}, "shortForecast": "Clear"}
+    ]
+  }
+}

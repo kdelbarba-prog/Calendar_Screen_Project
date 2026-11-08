@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "periods": [
+      {"startTime": "2026-11-08T10:00:00-06:00", "isDaytime": true, "temperature": 48, "probabilityOfPrecipitation": {"value": 20}, "shortForecast": "Partly Cloudy"},
+      {"startTime": "2026-11-08T11:00:00-06:00", "isDaytime": true, "temperature": 50, "probabilityOfPrecipitation": {"value": 30}, "shortForecast": "Partly Cloudy"},
+      {"startTime": "2026-11-08T12:00:00-06:00", "isDaytime": true, "temperature": 51, "probabilityOfPrecipitation": {"value": 35}, "shortForecast": "Mostly Sunny"},
+      {"startTime": "2026-11-08T13:00:00-06:00", "isDaytime": true, "temperature": 52, "probabilityOfPrecipitation": {"value": 40}, "shortForecast": "Sunny"}
+    ]
+  }
+}

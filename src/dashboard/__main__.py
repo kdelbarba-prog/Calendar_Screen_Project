@@ -12,7 +12,13 @@ from dashboard.config import ConfigError, load_config
 from dashboard.logging_setup import setup_logging
 from dashboard.models import Event
 from dashboard.services import layout_calendar, merge_events, render_calendar_ascii
-from dashboard.sources import CalendarSourceError, IcsCalendarSource
+from dashboard.sources import (
+    CalendarSourceError,
+    IcsCalendarSource,
+    WeatherProviderError,
+    create_weather_provider,
+    fetch_weather,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +46,15 @@ def main() -> int:
         help="fetch and display calendar events",
     )
     fetch_parser.add_argument("--days", type=int, default=30, help="number of days to fetch")
+    weather_parser = commands.add_parser(
+        "fetch-weather",
+        help="fetch and display normalized weather data",
+    )
+    weather_parser.add_argument(
+        "--compare",
+        action="store_true",
+        help="fetch both providers and compare current temperature and daily summary",
+    )
     args = parser.parse_args()
     setup_logging()
 
@@ -126,6 +141,64 @@ def main() -> int:
                 event.title,
             )
         logger.info("Fetched %d event(s) from enabled calendars.", len(events))
+        return int(failed)
+
+    if args.command == "fetch-weather":
+        try:
+            config = load_config()
+        except ConfigError as exc:
+            logger.error("Configuration check failed: %s", exc)
+            return 1
+        now = datetime.now(ZoneInfo(config.display.timezone))
+        if not args.compare:
+            try:
+                snapshot = fetch_weather(
+                    config.weather,
+                    now=now,
+                    timezone_name=config.display.timezone,
+                )
+            except WeatherProviderError as exc:
+                logger.error("%s", exc)
+                return 1
+            sys.stdout.write(snapshot.model_dump_json(indent=2) + "\n")
+            return 0
+
+        provider_names = ["nws", "openmeteo"]
+        snapshots = {}
+        failed = False
+        for provider_name in provider_names:
+            provider = create_weather_provider(
+                provider_name,
+                config.weather,
+                timezone_name=config.display.timezone,
+            )
+            try:
+                snapshots[provider_name] = provider.fetch_snapshot(now=now)
+            except WeatherProviderError as exc:
+                failed = True
+                logger.error("%s: %s", provider_name, exc)
+        lines = [
+            "provider       current      hi/lo       precip chance",
+            "-------------- ------------ ----------- -------------",
+        ]
+        for provider_name in provider_names:
+            snapshot = snapshots.get(provider_name)
+            if snapshot is None:
+                lines.append(f"{provider_name:<14} unavailable")
+                continue
+            temp_unit = "F" if snapshot.units == "imperial" else "C"
+            chance = (
+                f"{snapshot.today.precip_chance}%"
+                if snapshot.today.precip_chance is not None
+                else "n/a"
+            )
+            high = f"{snapshot.today.hi:g}" if snapshot.today.hi is not None else "n/a"
+            low = f"{snapshot.today.lo:g}" if snapshot.today.lo is not None else "n/a"
+            lines.append(
+                f"{provider_name:<14} {snapshot.current.temp:g} {temp_unit:<8} "
+                f"{high}/{low:<7} {chance}"
+            )
+        sys.stdout.write("\n".join(lines) + "\n")
         return int(failed)
 
     if not args.check_config:

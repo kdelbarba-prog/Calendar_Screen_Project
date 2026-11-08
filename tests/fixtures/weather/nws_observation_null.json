@@ -1,0 +1,9 @@
+{
+  "properties": {
+    "timestamp": "2026-11-08T09:50:00-06:00",
+    "temperature": {"value": null, "unitCode": "wmoUnit:degC"},
+    "textDescription": "Unknown",
+    "heatIndex": null,
+    "windChill": null
+  }
+}

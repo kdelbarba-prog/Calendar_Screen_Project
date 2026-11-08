@@ -1,0 +1,25 @@
+{
+  "current": {
+    "time": "2026-11-08T10:00",
+    "temperature_2m": 48.2,
+    "relative_humidity_2m": 62,
+    "apparent_temperature": 45.1,
+    "is_day": 1,
+    "precipitation": 0,
+    "weather_code": 2
+  },
+  "hourly": {
+    "time": ["2026-11-08T10:00", "2026-11-08T11:00", "2026-11-08T12:00"],
+    "temperature_2m": [48.2, 50.0, 51.5],
+    "precipitation_probability": [20, 25, null],
+    "weather_code": [2, 2, 0],
+    "is_day": [1, 1, 1]
+  },
+  "daily": {
+    "time": ["2026-11-08", "2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13", "2026-11-14"],
+    "temperature_2m_max": [51.0, 52.0, 49.0, 46.0, 44.0, 43.0, 45.0],
+    "temperature_2m_min": [36.0, 37.0, 35.0, 33.0, 30.0, 29.0, 31.0],
+    "precipitation_probability_max": [30, 0, 40, 0, 10, 0, 0],
+    "weather_code": [2, 0, 61, 3, 71, 1, 0]
+  }
+}

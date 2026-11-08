@@ -1,0 +1,7 @@
+{
+  "properties": {
+    "forecast": "https://api.weather.gov/gridpoints/LOT/75,73/forecast",
+    "forecastHourly": "https://api.weather.gov/gridpoints/LOT/75,73/forecast/hourly",
+    "observationStations": "https://api.weather.gov/gridpoints/LOT/75,73/stations"
+  }
+}

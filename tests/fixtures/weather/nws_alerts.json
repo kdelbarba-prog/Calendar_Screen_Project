@@ -1,0 +1,10 @@
+{
+  "features": [
+    {
+      "properties": {
+        "headline": "Wind Advisory",
+        "severity": "Moderate"
+      }
+    }
+  ]
+}

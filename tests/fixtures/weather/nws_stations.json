@@ -1,0 +1,10 @@
+{
+  "features": [
+    {
+      "id": "https://api.weather.gov/stations/KORD",
+      "properties": {
+        "stationIdentifier": "KORD"
+      }
+    }
+  ]
+}

@@ -18,3 +18,6 @@ authoritative schema for the generated `data.json` file.
   calendar events.
 - `python -m dashboard layout-preview --today 2026-03-08` prints a terminal
   preview using the pure layout services in `src/dashboard/services/`.
+- `python -m dashboard fetch-weather [--compare]` prints normalized weather
+  data or compares the NWS and Open-Meteo providers. Local weather icons are in
+  `static/icons/`; provider failures use the configured fallback when available.
