@@ -1,0 +1,50 @@
+blue:
+  bg: "#1F4E8C"
+  fg: "#FFFFFF"
+  tentative_bg: "#C6D9F1"
+  tentative_fg: "#10243F"
+teal:
+  bg: "#00695C"
+  fg: "#FFFFFF"
+  tentative_bg: "#B2DFDB"
+  tentative_fg: "#00332D"
+green:
+  bg: "#2E7D32"
+  fg: "#FFFFFF"
+  tentative_bg: "#C8E6C9"
+  tentative_fg: "#1B3B1D"
+orange:
+  bg: "#A84300"
+  fg: "#FFFFFF"
+  tentative_bg: "#FFD1B3"
+  tentative_fg: "#4A1F00"
+red:
+  bg: "#B71C1C"
+  fg: "#FFFFFF"
+  tentative_bg: "#FFCDD2"
+  tentative_fg: "#4A0B0B"
+purple:
+  bg: "#5E35B1"
+  fg: "#FFFFFF"
+  tentative_bg: "#D1C4E9"
+  tentative_fg: "#24134B"
+pink:
+  bg: "#AD1457"
+  fg: "#FFFFFF"
+  tentative_bg: "#F8BBD0"
+  tentative_fg: "#4A0825"
+brown:
+  bg: "#6D4C41"
+  fg: "#FFFFFF"
+  tentative_bg: "#D7CCC8"
+  tentative_fg: "#30211C"
+cyan:
+  bg: "#006064"
+  fg: "#FFFFFF"
+  tentative_bg: "#B2EBF2"
+  tentative_fg: "#003336"
+slate:
+  bg: "#455A64"
+  fg: "#FFFFFF"
+  tentative_bg: "#CFD8DC"
+  tentative_fg: "#1F292D"

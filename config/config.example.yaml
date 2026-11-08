@@ -1,0 +1,48 @@
+display:
+  timezone: America/Chicago
+  time_format: 12h
+  clock_show_seconds: false
+  night_theme:
+    enabled: true
+    start: "21:00"
+    end: "06:30"
+
+calendars:
+  # Enable this calendar after adding HOME_CALENDAR_URL to the root .env file.
+  - name: Home
+    type: ics
+    url_env_var: HOME_CALENDAR_URL
+    color: blue
+    enabled: false
+    my_email: null
+    show_declined: false
+    show_tentative: true
+
+calendar_view:
+  min_weeks: 2
+  max_weeks: 6
+  line_budget: 8
+  max_events_per_day: 6
+  max_bar_lanes: 3
+  max_title_chars: 32
+  max_lines_per_event: 2
+  location_mode: city
+
+weather:
+  provider: nws
+  fallback_provider: openmeteo
+  nws_station: null
+  lat: 41.8781
+  lon: -87.6298
+  units: imperial
+  refresh_minutes: 30
+  user_agent: "Calendar Screen Project/0.1 (configure a contact address)"
+
+backgrounds:
+  folder: backgrounds
+  change_minutes: 60
+  enabled: true
+
+server:
+  host: 127.0.0.1
+  port: 8080
