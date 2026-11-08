@@ -11,3 +11,10 @@ environment-variable name. Then run `python -m dashboard --check-config`.
 
 The project targets Python 3.11 and uses `src/dashboard/models.py` as the
 authoritative schema for the generated `data.json` file.
+
+## Calendar tools
+
+- `python -m dashboard fetch-calendars --days 30` fetches and lists configured
+  calendar events.
+- `python -m dashboard layout-preview --today 2026-03-08` prints a terminal
+  preview using the pure layout services in `src/dashboard/services/`.

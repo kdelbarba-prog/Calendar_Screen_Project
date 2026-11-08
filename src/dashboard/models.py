@@ -20,6 +20,7 @@ class StrictModel(BaseModel):
 class Event(StrictModel):
     """A normalized calendar event before layout."""
 
+    uid: str | None = None
     calendar_name: str
     color: str
     title: str
