@@ -1,0 +1,405 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1080px;
+  height: 1920px;
+  margin: 0;
+  overflow: hidden;
+  background: #101820;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-rows: 620px 1300px;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #101820;
+}
+
+.top-zone {
+  position: relative;
+  overflow: hidden;
+  background: #17212b;
+}
+
+.background-image {
+  position: absolute;
+  inset: 0;
+  background-color: #17212b;
+  background-position: center;
+  background-size: cover;
+}
+
+.top-shade {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 48px 56px 30px;
+  background: linear-gradient(180deg, rgb(0 0 0 / 44%), rgb(0 0 0 / 20%) 55%, rgb(0 0 0 / 65%));
+}
+
+.clock-panel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.clock {
+  display: block;
+  font-size: 112px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -4px;
+  line-height: 1;
+}
+
+.date-label {
+  margin-top: 12px;
+  font-size: 34px;
+  letter-spacing: 1px;
+}
+
+.offline-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 2px solid #ffcc80;
+  border-radius: 6px;
+  background: #422b16;
+  color: #fff3e0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.offline-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ff9800;
+  color: #1b1208;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+.weather-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.weather-current {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.weather-icon {
+  width: 70px;
+  height: 70px;
+}
+
+.current-reading {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+}
+
+.current-temperature {
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.current-condition {
+  margin-top: 6px;
+  font-size: 22px;
+}
+
+.today-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 23px;
+  text-align: right;
+}
+
+.forecast-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.forecast-day {
+  display: flex;
+  min-height: 104px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgb(255 255 255 / 28%);
+  background: rgb(0 0 0 / 25%);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.forecast-day img {
+  width: 30px;
+  height: 30px;
+}
+
+.weather-empty {
+  font-size: 26px;
+}
+
+.calendar-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  padding: 10px 24px;
+  background: #111820;
+}
+
+.week-grid {
+  position: relative;
+  display: grid;
+  flex: 1 1 0;
+  min-height: 0;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: 44px repeat(var(--lanes), 34px) minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: 2px;
+  padding: 4px 0 8px;
+  border-bottom: 2px solid #52616d;
+}
+
+.day-backgrounds {
+  display: contents;
+}
+
+.day-background {
+  z-index: 0;
+  border-right: 1px solid #44515c;
+  background: #18212a;
+}
+
+.day-background:nth-child(even) {
+  background: #1b252e;
+}
+
+.day-background.is-today {
+  border-right-color: #90caf9;
+  border-left: 3px solid #90caf9;
+  background: #263d4f;
+}
+
+.date-cell,
+.event-bar,
+.chip-cell {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 7px;
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.date-cell.is-today .date-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #90caf9;
+  color: #101820;
+}
+
+.month-marker {
+  overflow: hidden;
+  color: #b7c8d6;
+  font-size: 12px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-bar {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin: 0 2px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.event-bar.continues-left {
+  margin-left: 0;
+  padding-left: 13px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.event-bar.continues-right {
+  margin-right: 0;
+  padding-right: 13px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.event-bar.continues-left::before {
+  position: absolute;
+  left: 3px;
+  content: "‹";
+  font-size: 22px;
+}
+
+.event-bar.continues-right::after {
+  position: absolute;
+  right: 3px;
+  content: "›";
+  font-size: 22px;
+}
+
+.event-bar.status-tentative,
+.event-chip.status-tentative {
+  border-left: 4px dashed var(--tentative-border, #fff);
+}
+
+.event-bar.status-declined,
+.event-chip.status-declined {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.bar-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-cell {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.event-chip {
+  display: flex;
+  min-height: 28px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 4px 5px;
+  border-radius: 4px;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  font-size: 13px;
+  line-height: 1.12;
+}
+
+.chip-time {
+  margin-bottom: 2px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-title,
+.chip-location {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+}
+
+.chip-location {
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.more-count {
+  flex: 0 0 auto;
+  padding: 3px 5px;
+  color: #d3e2ef;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.calendar-empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: #b0bec5;
+  font-size: 34px;
+}
+
+.calendar-status {
+  position: absolute;
+  right: 22px;
+  bottom: 8px;
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+}
+
+.stale-source {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #cfd8dc;
+  font-size: 12px;
+}
+
+.stale-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffb74d;
+}
+
+.night-theme .top-zone {
+  background-color: #10141c;
+}
+
+.night-theme .top-shade {
+  background: rgb(3 8 16 / 62%);
+}

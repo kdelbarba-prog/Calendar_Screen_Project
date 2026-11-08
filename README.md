@@ -21,3 +21,21 @@ authoritative schema for the generated `data.json` file.
 - `python -m dashboard fetch-weather [--compare]` prints normalized weather
   data or compares the NWS and Open-Meteo providers. Local weather icons are in
   `static/icons/`; provider failures use the configured fallback when available.
+
+## Dashboard rendering
+
+- `python -m dashboard fetch-once` fetches configured sources and atomically
+  updates `cache/state.json`, retaining last-known-good calendar or weather
+  data when an individual source fails.
+- `python -m dashboard render` renders that state to `output/index.html` and
+  `output/data.json`.
+- `python -m dashboard render --sample --scenario normal` renders the committed
+  sample data without using the local config or contacting external services.
+  Other scenarios are `busy`, `empty`, `long-titles`, `stale`, `offline`, and
+  `night`.
+- `python -m dashboard check-budget` checks the generated page/assets against
+  the page-size and background-image limits.
+
+The page is designed for a 1080x1920 portrait kiosk display. Open
+`output/index.html` in Chromium or serve `output/` over HTTP so the page can
+poll `data.json` and rotate generated backgrounds.
