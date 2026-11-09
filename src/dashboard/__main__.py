@@ -11,11 +11,13 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from dashboard.config import CONFIG_DIRECTORY, PROJECT_ROOT, ConfigError, load_config
+from dashboard.doctor import run_doctor
 from dashboard.logging_setup import setup_logging
 from dashboard.models import DashboardData, Event
 from dashboard.renderer import RenderError, apply_scenario, check_budget, render_output
 from dashboard.services import layout_calendar, merge_events, render_calendar_ascii
 from dashboard.services.fetch_once import DEFAULT_CACHE_PATH, fetch_once
+from dashboard.services.runtime import run_dashboard
 from dashboard.sources import (
     CalendarSourceError,
     IcsCalendarSource,
@@ -62,6 +64,14 @@ def main() -> int:
     commands.add_parser(
         "fetch-once",
         help="fetch configured sources and atomically update cache/state.json",
+    )
+    commands.add_parser(
+        "run",
+        help="run the dashboard scheduler and local HTTP server",
+    )
+    commands.add_parser(
+        "doctor",
+        help="check configuration and Raspberry Pi deployment health",
     )
     render_parser = commands.add_parser(
         "render",
@@ -241,6 +251,26 @@ def main() -> int:
             len(data.calendar.weeks),
         )
         return 0
+
+    if args.command == "run":
+        try:
+            config = load_config()
+            run_dashboard(config)
+        except ConfigError as exc:
+            logger.error("Configuration check failed: %s", exc)
+            return 1
+        except (OSError, RenderError) as exc:
+            logger.error("Dashboard runtime failed (%s).", type(exc).__name__)
+            return 1
+        return 0
+
+    if args.command == "doctor":
+        try:
+            config = load_config()
+        except ConfigError as exc:
+            logger.error("Configuration check failed: %s", exc)
+            return 1
+        return run_doctor(config)
 
     if args.command == "render":
         if not args.sample and args.scenario != "normal":

@@ -1,0 +1,6 @@
+[Unit]
+Description=Restart Calendar Screen Chromium Kiosk
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart dashboard-kiosk.service

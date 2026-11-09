@@ -1,0 +1,27 @@
+[Unit]
+Description=Calendar Screen Dashboard
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=wallcalendar
+Group=wallcalendar
+WorkingDirectory=/opt/calendar-screen
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/opt/calendar-screen/.env
+ExecStart=/opt/calendar-screen/.venv/bin/python -m dashboard run
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/calendar-screen/cache /opt/calendar-screen/output
+
+# Enable only after adding systemd watchdog notifications to the application:
+# WatchdogSec=60
+
+[Install]
+WantedBy=multi-user.target

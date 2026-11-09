@@ -1,0 +1,10 @@
+[Unit]
+Description=Nightly restart of Calendar Screen Chromium Kiosk
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+Unit=dashboard-chromium-restart.service
+
+[Install]
+WantedBy=timers.target

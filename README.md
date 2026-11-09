@@ -39,3 +39,14 @@ authoritative schema for the generated `data.json` file.
 The page is designed for a 1080x1920 portrait kiosk display. Open
 `output/index.html` in Chromium or serve `output/` over HTTP so the page can
 poll `data.json` and rotate generated backgrounds.
+
+Run `python -m dashboard run` to start the refresh scheduler and local web
+server. It refreshes each calendar and weather source at its configured
+interval, serves `output/` on the configured host/port, and exposes
+URL-free source health at `/healthz`. The cached page is rendered before
+network refreshes begin.
+
+- `python -m dashboard doctor` checks the configuration, source connectivity,
+  timezone/NTP, free disk space, and rendered page without printing feed URLs.
+- Raspberry Pi OS Bookworm deployment and kiosk setup are documented in
+  [docs/DEPLOY.md](./docs/DEPLOY.md).

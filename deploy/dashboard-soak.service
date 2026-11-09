@@ -1,0 +1,12 @@
+[Unit]
+Description=Hourly Calendar Screen Soak Monitor
+After=dashboard-kiosk.service
+
+[Service]
+Type=simple
+ExecStart=/opt/calendar-screen/deploy/soak_monitor.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

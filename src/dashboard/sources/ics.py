@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import logging
+import ipaddress
 from datetime import date, datetime, time, timedelta
 from typing import Any
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
 import recurring_ical_events
@@ -46,7 +48,33 @@ def _secret_url(config: CalendarConfig) -> str:
         raise CalendarSourceError(
             f"Calendar '{config.name}' has no feed URL; configure its environment variable."
         )
-    return _calendar_url(value)
+    url = _calendar_url(value)
+    try:
+        parsed = urlsplit(url)
+        hostname = parsed.hostname
+    except ValueError:
+        hostname = None
+        parsed = None
+    if parsed is None or parsed.scheme not in {"http", "https"} or not hostname:
+        raise CalendarSourceError(
+            f"Calendar '{config.name}' has an invalid feed URL; use HTTPS or localhost HTTP."
+        )
+    if parsed.scheme == "http" and not _is_loopback_host(hostname):
+        raise CalendarSourceError(
+            f"Calendar '{config.name}' uses HTTP; only localhost feeds are allowed."
+        )
+    return url
+
+
+def _is_loopback_host(hostname: str) -> bool:
+    """Allow plain HTTP only for loopback addresses and localhost names."""
+    host = hostname.rstrip(".").casefold()
+    if host == "localhost" or host.endswith(".localhost"):
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
 
 
 def _safe_content_description(value: Any) -> str | None:
