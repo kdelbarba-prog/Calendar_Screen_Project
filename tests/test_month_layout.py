@@ -290,18 +290,32 @@ def test_overnight_chip_includes_end_time_and_display_text_is_truncated() -> Non
     assert chip.location == "Wheaton"
 
 
-def test_calendar_auto_fit_respects_min_max_and_monotonic_budget() -> None:
-    """The fitter starts at its minimum and uses no more weeks than the budget allows."""
+def test_calendar_returns_all_weeks_for_browser_content_measurement() -> None:
+    """The renderer receives max_weeks and lets the browser fit actual CSS heights."""
     minimal = _layout([], min_weeks=2, max_weeks=6, line_budget=1)
-    medium = _layout([], min_weeks=2, max_weeks=6, line_budget=4)
-    generous = _layout([], min_weeks=2, max_weeks=6, line_budget=6)
+    medium = _layout([], min_weeks=2, max_weeks=6, line_budget=8)
+    generous = _layout([], min_weeks=2, max_weeks=6, line_budget=30)
 
-    assert len(minimal.weeks) == 2
-    assert len(medium.weeks) == 4
+    assert len(minimal.weeks) == 6
+    assert len(medium.weeks) == 6
     assert len(generous.weeks) == 6
-    assert 2 <= len(minimal.weeks) <= 6
-    assert 2 <= len(medium.weeks) <= 6
-    assert 2 <= len(generous.weeks) <= 6
+
+
+def test_calendar_does_not_discard_weeks_before_browser_measurement() -> None:
+    """Dense events do not cause server-side estimates to discard future weeks."""
+    events = [
+        _event(f"Busy {index}", _at(2, 8 + index), _at(2, 8 + index, minute=30))
+        for index in range(6)
+    ]
+
+    calendar = _layout(
+        events,
+        min_weeks=2,
+        max_weeks=6,
+        line_budget=8,
+    )
+
+    assert len(calendar.weeks) == 6
 
 
 def test_bar_lane_invariant_and_day_event_accounting() -> None:

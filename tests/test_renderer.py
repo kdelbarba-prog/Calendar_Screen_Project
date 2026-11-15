@@ -60,6 +60,119 @@ def test_template_renders_sample_bars_chips_status_classes_and_palette(
     assert "continues-right" in html
 
 
+def test_week_heights_are_left_to_actual_browser_content_and_forecasts_are_in_headers(
+    sample_data: DashboardData,
+) -> None:
+    """The browser sizes each row from content instead of using text estimates."""
+    html = render_page(sample_data)
+
+    assert html.count('class="week-grid"') == len(sample_data.calendar.weeks)
+    assert "--week-min-height" not in html
+    assert 'class="forecast-strip"' not in html
+    assert 'class="day-forecast"' in html
+    assert "Nov" in html
+    assert '<time id="clock" class="clock">--:--:--</time>' in html
+
+
+def test_active_day_omits_duplicate_daily_forecast(sample_data: DashboardData) -> None:
+    """The larger current/today weather summary replaces the active date's forecast."""
+    html = render_page(sample_data)
+    today_cell = html.split('<div class="date-cell is-today"', 1)[1].split(
+        '<div class="date-cell', 1
+    )[0]
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+
+    assert 'class="day-forecast"' not in today_cell
+    assert 'class="day-forecast"' in html
+    assert "if (forecast && !day.is_today)" in script
+
+
+def test_week_rows_use_intrinsic_content_height_and_resize_independently() -> None:
+    """Week rows grow to the real chip stack and are fitted using DOM measurements."""
+    css = (PROJECT_ROOT / "static" / "dashboard.css").read_text(encoding="utf-8")
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+
+    assert "flex: 0 0 auto" in css
+    assert "grid-template-rows: 44px repeat(var(--lanes), 34px) max-content" in css
+    assert "min-height: max-content" in css
+    assert "getBoundingClientRect().height" in script
+    assert "new ResizeObserver(fitRenderedWeeks)" in script
+    assert "estimatedWeekHeight" not in script
+    assert "estimatedChipHeight" not in script
+
+
+def test_weather_and_date_header_alignment_styles() -> None:
+    """Current conditions stack above today's summary on the right; headers read separately."""
+    css = (PROJECT_ROOT / "static" / "dashboard.css").read_text(encoding="utf-8")
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+
+    weather_styles = css.split(".weather-panel {", 1)[1].split("}", 1)[0]
+    date_styles = css.split(".date-cell {", 1)[1].split("}", 1)[0]
+    forecast_styles = css.split(".day-forecast {", 1)[1].split("}", 1)[0]
+
+    assert "align-items: flex-end" in weather_styles
+    assert "weatherPanel.append(currentRow, summary)" in script
+    assert "background: #202a34" in date_styles
+    assert "padding-right: 6px" in forecast_styles
+
+
+def test_weekday_header_and_date_dividers_extend_through_forecast_row(
+    sample_data: DashboardData,
+) -> None:
+    """Weekday initials align with every date, while today is marked only by its circle."""
+    html = render_page(sample_data)
+    css = (PROJECT_ROOT / "static" / "dashboard.css").read_text(encoding="utf-8")
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+
+    weekday_row = html.split('<div class="weekday-row"', 1)[1].split("</div>", 1)[0]
+    assert [label for label in "SMTWTFS"] == [
+        item.split("</span>", 1)[0].split(">")[-1]
+        for item in weekday_row.split('<span class="weekday-label">')[1:]
+    ]
+    assert ".date-cell.is-today {" not in css
+    assert ".date-cell.is-today .date-number {" in css
+    assert "border-right: 1px solid #44515c" in css
+    assert "querySelector(\".weekday-row\")" in script
+    assert "const background = element(\"div\", \"day-background\")" in script
+    week_styles = css.split(".week-grid {", 1)[1].split("}", 1)[0]
+    assert "padding: 0 0 8px" in week_styles
+
+
+def test_chip_detail_text_wraps_instead_of_ellipsis_clipping() -> None:
+    """Calendar card titles and locations are allowed to wrap onto more lines."""
+    css = (PROJECT_ROOT / "static" / "dashboard.css").read_text(encoding="utf-8")
+    title_styles = css.split(".chip-title,\n.chip-location {", 1)[1].split("}", 1)[0]
+
+    assert "white-space: normal" in title_styles
+    assert "overflow-wrap: anywhere" in title_styles
+    assert "text-overflow: ellipsis" not in title_styles
+
+
+def test_stale_overfull_calendar_payload_reaches_browser_for_actual_fit(
+    sample_data: DashboardData,
+) -> None:
+    """Cached week lists are passed whole to the runtime DOM fitter."""
+    calendar = sample_data.calendar.model_copy(
+        update={"weeks": [sample_data.calendar.weeks[0]] * 6}
+    )
+    overfull_data = sample_data.model_copy(update={"calendar": calendar})
+    html = render_page(overfull_data)
+
+    assert html.count('class="week-grid"') == 6
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+    assert "calendar.weeks.forEach((week) => {" in script
+    assert "weeks.slice(visibleCount).forEach((week) => week.classList.add(\"is-hidden\"))" in script
+
+
+def test_clock_script_updates_seconds_without_page_reload() -> None:
+    """The displayed seconds are updated by the clock interval in JavaScript."""
+    script = (PROJECT_ROOT / "static" / "dashboard.js").read_text(encoding="utf-8")
+
+    assert 'second: "2-digit"' in script
+    assert "window.setInterval(updateClock, 1000)" in script
+    assert "window.location.reload" not in script
+
+
 @pytest.mark.parametrize("scenario", SCENARIOS)
 def test_each_sample_scenario_still_validates(
     sample_data: DashboardData,

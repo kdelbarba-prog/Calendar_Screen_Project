@@ -109,6 +109,15 @@ def test_all_palette_color_pairs_meet_wcag_aa() -> None:
         assert _contrast_ratio(color.tentative_fg, color.tentative_bg) >= 4.5, name
 
 
+def test_yellow_palette_is_available_for_calendars() -> None:
+    """The named yellow calendar color is included in the validated palette."""
+    palette = load_palette(COLORS_FILE)
+
+    assert "yellow" in palette
+    assert _contrast_ratio(palette["yellow"].fg, palette["yellow"].bg) >= 4.5
+    assert _contrast_ratio(palette["yellow"].tentative_fg, palette["yellow"].tentative_bg) >= 4.5
+
+
 def test_handwritten_sample_validates_against_dashboard_data() -> None:
     """The fixture demonstrates the current versioned page data contract."""
     data = DashboardData.model_validate_json(SAMPLE_DATA.read_text(encoding="utf-8"))

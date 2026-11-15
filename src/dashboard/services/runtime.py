@@ -296,7 +296,6 @@ class DashboardRuntime:
             backgrounds_path=background_path,
             backgrounds_enabled=self.config.backgrounds.enabled,
             change_minutes=self.config.backgrounds.change_minutes,
-            clock_show_seconds=self.config.display.clock_show_seconds,
         )
 
     def _seconds_until_next(self, now: datetime) -> float:

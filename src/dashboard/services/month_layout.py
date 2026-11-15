@@ -39,14 +39,6 @@ class _PreparedEvent:
         return self.local_end.date()
 
 
-@dataclass(frozen=True)
-class _WeekResult:
-    """A laid-out calendar week with its line-budget cost."""
-
-    week: CalendarWeek
-    height: int
-
-
 def _event_id(event: Event) -> str:
     """Create a stable compact identifier without exposing raw source UIDs."""
     identity = event.uid or "|".join(
@@ -170,7 +162,7 @@ def _layout_week(
     max_events_per_day: int,
     max_bar_lanes: int,
     time_format: TimeFormat,
-) -> _WeekResult:
+) -> CalendarWeek:
     """Lay out one week and count all hidden chips and overflow bars."""
     week_end = week_start + timedelta(days=7)
     week_bars = [
@@ -208,7 +200,6 @@ def _layout_week(
             visible_bars.append(_bar_segment(event, week_start, lane))
 
     days: list[CalendarDay] = []
-    max_chip_lines = 0
     for offset in range(7):
         day = week_start + timedelta(days=offset)
         day_chips = [
@@ -250,15 +241,13 @@ def _layout_week(
                 chips=chips,
             )
         )
-        max_chip_lines = max(max_chip_lines, len(chips), len(chips) + int(more_count > 0))
-
     week = CalendarWeek(
         start=week_start,
         lanes=len(lane_ends),
         bars=sorted(visible_bars, key=lambda bar: (bar.lane, bar.col_start, bar.id)),
         days=days,
     )
-    return _WeekResult(week=week, height=1 + week.lanes + max_chip_lines)
+    return week
 
 
 def layout_calendar(
@@ -276,7 +265,12 @@ def layout_calendar(
     time_format: TimeFormat = "12h",
     first_weekday: int = 6,
 ) -> CalendarView:
-    """Build the contract calendar section from events and explicit local today."""
+    """Build a height-fitted calendar view from events and explicit local today.
+
+    ``line_budget`` remains accepted for API compatibility. The browser fits
+    these rendered weeks using their actual content heights, which depend on
+    font metrics and the available width.
+    """
     if today is None:
         raise ValueError("today must be supplied")
     if not 1 <= min_weeks <= max_weeks <= 6:
@@ -293,8 +287,7 @@ def layout_calendar(
         location_mode=location_mode,
     )
     start = _week_start(today, first_weekday)
-    results: list[_WeekResult] = []
-    total_height = 0
+    weeks: list[CalendarWeek] = []
     for index in range(max_weeks):
         result = _layout_week(
             start + timedelta(days=7 * index),
@@ -304,12 +297,9 @@ def layout_calendar(
             max_bar_lanes=max_bar_lanes,
             time_format=time_format,
         )
-        if index >= min_weeks and total_height + result.height > line_budget:
-            break
-        results.append(result)
-        total_height += result.height
+        weeks.append(result)
 
-    return CalendarView(today=today, weeks=[result.week for result in results])
+    return CalendarView(today=today, weeks=weeks)
 
 
 def render_calendar_ascii(calendar: CalendarView) -> str:

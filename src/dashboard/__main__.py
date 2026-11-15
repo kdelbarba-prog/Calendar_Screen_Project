@@ -300,7 +300,6 @@ def main() -> int:
                         backgrounds_path=background_path,
                         backgrounds_enabled=config.backgrounds.enabled,
                         change_minutes=config.backgrounds.change_minutes,
-                        clock_show_seconds=config.display.clock_show_seconds,
                     )
             except (OSError, ValueError, RenderError) as exc:
                 logger.error("Render failed: %s", exc)
@@ -313,7 +312,6 @@ def main() -> int:
                     backgrounds_path=background_path,
                     backgrounds_enabled=config.backgrounds.enabled,
                     change_minutes=config.backgrounds.change_minutes,
-                    clock_show_seconds=config.display.clock_show_seconds,
                 )
             except (RenderError, OSError) as exc:
                 logger.error("Render failed: %s", exc)

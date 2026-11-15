@@ -125,7 +125,6 @@ def render_output(
     backgrounds_path: Path | str | None = None,
     backgrounds_enabled: bool = True,
     change_minutes: int = 60,
-    clock_show_seconds: bool = False,
 ) -> DashboardData:
     """Validate cached JSON, render index/data files, and copy local static assets."""
     state_file = Path(state_path)
@@ -162,7 +161,6 @@ def render_output(
         )
     client_config = {
         "timezone": data.timezone,
-        "clockShowSeconds": clock_show_seconds,
         "backgrounds": prepared_backgrounds,
         "backgroundChangeMinutes": max(1, change_minutes),
     }

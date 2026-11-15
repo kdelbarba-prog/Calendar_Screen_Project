@@ -1,3 +1,8 @@
+yellow:
+  bg: "#F9A825"
+  fg: "#241A00"
+  tentative_bg: "#FFF3C4"
+  tentative_fg: "#3D3000"
 blue:
   bg: "#1F4E8C"
   fg: "#FFFFFF"

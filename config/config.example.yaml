@@ -1,7 +1,7 @@
 display:
   timezone: America/Chicago
   time_format: 12h
-  clock_show_seconds: false
+  clock_show_seconds: true
   night_theme:
     enabled: true
     start: "21:00"
@@ -21,6 +21,7 @@ calendars:
 calendar_view:
   min_weeks: 2
   max_weeks: 6
+  # Kept for older config compatibility; visible weeks fit the 1300px calendar viewport.
   line_budget: 8
   max_events_per_day: 6
   max_bar_lanes: 3

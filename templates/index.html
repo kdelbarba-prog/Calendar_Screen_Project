@@ -14,7 +14,7 @@
       <div class="top-shade">
         <header class="clock-panel">
           <div>
-            <time id="clock" class="clock">--:--</time>
+            <time id="clock" class="clock">--:--:--</time>
             <div id="date-label" class="date-label"></div>
           </div>
           <div id="offline-indicator" class="offline-indicator{% if not data.get('status', {}).get('offline', false) %} is-hidden{% endif %}" aria-label="Offline">
@@ -31,23 +31,11 @@
               <span class="current-temperature">{{ weather.current.temp|round|int }}°</span>
               <span class="current-condition">{{ weather.current.condition }}</span>
             </div>
-            <div class="today-summary">
-              <span>Today {{ weather.today.hi if weather.today.hi is not none else '--' }}° / {{ weather.today.lo if weather.today.lo is not none else '--' }}°</span>
-              <span>{{ weather.today.precip_chance if weather.today.precip_chance is not none else '--' }}% precip</span>
-            </div>
           </div>
-          {% if weather.daily %}
-          <div class="forecast-strip">
-            {% for item in weather.daily[:7] %}
-            <div class="forecast-day">
-              <span>{{ item.date[5:] if item.date is string else item.date.strftime('%m-%d') }}</span>
-              <img src="static/icons/{{ item.icon_key }}.svg" alt="">
-              <span>{{ item.hi if item.hi is not none else '--' }}° / {{ item.lo if item.lo is not none else '--' }}°</span>
-              <span>{{ item.precip_chance if item.precip_chance is not none else '--' }}%</span>
-            </div>
-            {% endfor %}
+          <div class="today-summary">
+            <span>Today {{ weather.today.hi if weather.today.hi is not none else '--' }}° / {{ weather.today.lo if weather.today.lo is not none else '--' }}°</span>
+            <span>{{ weather.today.precip_chance if weather.today.precip_chance is not none else '--' }}% precip</span>
           </div>
-          {% endif %}
           {% else %}
           <div class="weather-empty">Weather unavailable</div>
           {% endif %}
@@ -57,17 +45,34 @@
     <section id="calendar-panel" class="calendar-panel" aria-label="Calendar">
       {% set calendar = data.get('calendar') %}
       {% if calendar and calendar.weeks %}
+        {% set month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+        <div class="weekday-row" aria-hidden="true">
+          {% for weekday in ['S', 'M', 'T', 'W', 'T', 'F', 'S'] %}
+          <span class="weekday-label">{{ weekday }}</span>
+          {% endfor %}
+        </div>
         {% for week in calendar.weeks %}
-        <section class="week-grid" style="--lanes: {{ week.lanes }}; --calendar-rows: {{ week.lanes + 2 }};" aria-label="Week beginning {{ week.start }}">
+        <section class="week-grid" style="--lanes: {{ week.lanes }};" aria-label="Week beginning {{ week.start }}">
           <div class="day-backgrounds" aria-hidden="true">
             {% for day in week.days %}
-            <div class="day-background{% if day.is_today %} is-today{% endif %}" style="grid-column: {{ loop.index }}; grid-row: 1 / -1;"></div>
+            <div class="day-background" style="grid-column: {{ loop.index }}; grid-row: 1 / -1;"></div>
             {% endfor %}
           </div>
           {% for day in week.days %}
           <div class="date-cell{% if day.is_today %} is-today{% endif %}" style="grid-column: {{ loop.index }}; grid-row: 1;">
             <span class="date-number">{{ day.date[-2:] if day.date is string else day.date.day }}</span>
-            {% if day.is_first_of_month %}<span class="month-marker">{{ day.date[:7] if day.date is string else day.date.strftime('%b %Y') }}</span>{% endif %}
+            {% if day.is_first_of_month %}<span class="month-marker">{{ month_names[(day.date[5:7]|int) - 1] if day.date is string else day.date.strftime('%b') }}</span>{% endif %}
+            {% if not day.is_today and weather and weather.daily %}
+              {% for forecast in weather.daily if (forecast.date[:10] if forecast.date is string else forecast.date.isoformat()) == (day.date[:10] if day.date is string else day.date.isoformat()) %}
+              <span class="day-forecast" aria-label="Forecast {{ forecast.hi if forecast.hi is not none else 'unknown' }} high, {{ forecast.lo if forecast.lo is not none else 'unknown' }} low">
+                <img src="static/icons/{{ forecast.icon_key }}.svg" alt="">
+                <span class="day-forecast-values">
+                  <span>{{ forecast.hi if forecast.hi is not none else '--' }}°/{{ forecast.lo if forecast.lo is not none else '--' }}°</span>
+                  <span>{{ forecast.precip_chance if forecast.precip_chance is not none else '--' }}% precip</span>
+                </span>
+              </span>
+              {% endfor %}
+            {% endif %}
           </div>
           {% endfor %}
           {% for bar in week.bars %}

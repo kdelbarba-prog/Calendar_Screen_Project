@@ -58,7 +58,7 @@ class DisplayConfig(StrictModel):
 
     timezone: str = "America/Chicago"
     time_format: Literal["12h", "24h"] = "12h"
-    clock_show_seconds: bool = False
+    clock_show_seconds: bool = True
     night_theme: NightThemeConfig = Field(default_factory=NightThemeConfig)
 
     @field_validator("timezone")
@@ -92,7 +92,11 @@ class CalendarViewConfig(StrictModel):
 
     min_weeks: int = Field(default=2, ge=1, le=6)
     max_weeks: int = Field(default=6, ge=1, le=6)
-    line_budget: int = Field(default=8, ge=1)
+    line_budget: int = Field(
+        default=8,
+        ge=1,
+        description="Legacy compatibility setting; week fitting uses the rendered viewport height.",
+    )
     max_events_per_day: int = Field(default=6, ge=1)
     max_bar_lanes: int = Field(default=3, ge=1)
     max_title_chars: int = Field(default=32, ge=1)

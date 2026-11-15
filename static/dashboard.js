@@ -28,15 +28,38 @@
     tentative_fg: "#1F292D",
   };
 
+  function fitRenderedWeeks() {
+    const weeks = [...calendarPanel.querySelectorAll(".week-grid")];
+    if (!weeks.length) return;
+
+    weeks.forEach((week) => week.classList.remove("is-hidden"));
+    const styles = getComputedStyle(calendarPanel);
+    const availableHeight = calendarPanel.clientHeight
+      - parseFloat(styles.paddingTop)
+      - parseFloat(styles.paddingBottom)
+      - (calendarPanel.querySelector(".weekday-row")?.getBoundingClientRect().height || 0);
+    let usedHeight = 0;
+    let visibleCount = 0;
+
+    for (const week of weeks) {
+      const actualHeight = week.getBoundingClientRect().height;
+      if (visibleCount > 0 && usedHeight + actualHeight > availableHeight) break;
+      usedHeight += actualHeight;
+      visibleCount += 1;
+    }
+
+    weeks.slice(visibleCount).forEach((week) => week.classList.add("is-hidden"));
+  }
+
   function updateClock() {
     const now = new Date();
     const timeOptions = {
       timeZone: timezone,
       hour: "numeric",
       minute: "2-digit",
+      second: "2-digit",
       hour12: true,
     };
-    if (config.clockShowSeconds) timeOptions.second = "2-digit";
     clockElement.textContent = new Intl.DateTimeFormat(undefined, timeOptions).format(now);
     dateElement.textContent = new Intl.DateTimeFormat(undefined, {
       timeZone: timezone,
@@ -98,27 +121,9 @@
       element("span", "", `Today ${hi}° / ${lo}°`),
       element("span", "", `${precip}% precip`),
     );
-    currentRow.append(icon, reading, summary);
-    weatherPanel.append(currentRow);
+    currentRow.append(icon, reading);
+    weatherPanel.append(currentRow, summary);
 
-    if (Array.isArray(weather.daily) && weather.daily.length) {
-      const strip = element("div", "forecast-strip");
-      weather.daily.slice(0, 7).forEach((item) => {
-        const day = element("div", "forecast-day");
-        const dateLabel = String(item.date).slice(5);
-        const iconImage = element("img");
-        iconImage.src = iconPath(item.icon_key);
-        iconImage.alt = "";
-        day.append(
-          element("span", "", dateLabel),
-          iconImage,
-          element("span", "", `${item.hi === null ? "--" : item.hi}° / ${item.lo === null ? "--" : item.lo}°`),
-          element("span", "", `${item.precip_chance === null ? "--" : item.precip_chance}%`),
-        );
-        strip.append(day);
-      });
-      weatherPanel.append(strip);
-    }
   }
 
   function renderCalendar(data) {
@@ -145,16 +150,18 @@
       statusPanel.append(chip);
     });
 
+    const forecasts = new Map(
+      ((data.weather && data.weather.daily) || []).map((item) => [String(item.date), item]),
+    );
     calendar.weeks.forEach((week) => {
       const weekGrid = element("section", "week-grid");
       weekGrid.style.setProperty("--lanes", Number(week.lanes) || 0);
-      weekGrid.style.setProperty("--calendar-rows", (Number(week.lanes) || 0) + 2);
       weekGrid.setAttribute("aria-label", `Week beginning ${week.start}`);
 
       const backgrounds = element("div", "day-backgrounds");
       backgrounds.setAttribute("aria-hidden", "true");
       week.days.forEach((day, index) => {
-        const background = element("div", `day-background${day.is_today ? " is-today" : ""}`);
+        const background = element("div", "day-background");
         background.style.gridColumn = String(index + 1);
         background.style.gridRow = "1 / -1";
         backgrounds.append(background);
@@ -167,7 +174,37 @@
         dateCell.style.gridRow = "1";
         dateCell.append(element("span", "date-number", String(day.date).slice(-2)));
         if (day.is_first_of_month) {
-          dateCell.append(element("span", "month-marker", String(day.date).slice(0, 7)));
+          const month = new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            timeZone: "UTC",
+          }).format(new Date(`${String(day.date)}T12:00:00Z`));
+          dateCell.append(element("span", "month-marker", month));
+        }
+        const forecast = forecasts.get(String(day.date));
+        if (forecast && !day.is_today) {
+          const forecastElement = element("span", "day-forecast");
+          forecastElement.setAttribute(
+            "aria-label",
+            `Forecast ${forecast.hi === null ? "unknown" : forecast.hi} high, ${forecast.lo === null ? "unknown" : forecast.lo} low`,
+          );
+          const forecastIcon = element("img");
+          forecastIcon.src = iconPath(forecast.icon_key);
+          forecastIcon.alt = "";
+          const values = element("span", "day-forecast-values");
+          values.append(
+            element(
+              "span",
+              "",
+              `${forecast.hi === null ? "--" : forecast.hi}°/${forecast.lo === null ? "--" : forecast.lo}°`,
+            ),
+            element(
+              "span",
+              "",
+              `${forecast.precip_chance === null ? "--" : forecast.precip_chance}% precip`,
+            ),
+          );
+          forecastElement.append(forecastIcon, values);
+          dateCell.append(forecastElement);
         }
         weekGrid.append(dateCell);
       });
@@ -209,6 +246,7 @@
       });
       calendarPanel.insertBefore(weekGrid, statusPanel);
     });
+    fitRenderedWeeks();
   }
 
   function updateDashboard(data) {
@@ -244,22 +282,18 @@
 
   function scheduleClock() {
     updateClock();
-    if (config.clockShowSeconds) {
-      window.setInterval(updateClock, 1000);
-      return;
-    }
-    const align = () => {
-      const delay = 60000 - (Date.now() % 60000);
-      window.setTimeout(() => {
-        updateClock();
-        align();
-      }, delay);
-    };
-    align();
+    window.setInterval(updateClock, 1000);
   }
 
   scheduleClock();
   rotateBackground();
   pollData();
   window.setInterval(pollData, 60000);
+  window.addEventListener("resize", fitRenderedWeeks);
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(fitRenderedWeeks).observe(calendarPanel);
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitRenderedWeeks);
+  }
 })();
