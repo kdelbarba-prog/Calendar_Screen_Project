@@ -302,6 +302,9 @@ class IcsCalendarSource(CalendarSource):
         if event_end < event_start:
             raise ValueError("VEVENT end precedes start")
 
+        if event_end == event_start:
+            event_end = event_start + (timedelta(days=1) if all_day else timedelta(minutes=1))
+
         status = _event_status(component, self.config.my_email)
         raw_location = component.get("LOCATION")
         location = format_location(
