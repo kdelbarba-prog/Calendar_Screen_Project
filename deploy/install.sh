@@ -93,7 +93,7 @@ install -o "$APP_USER" -g "$APP_GROUP" -m 0644 \
 install -o "$APP_USER" -g "$APP_GROUP" -m 0644 \
     "${APP_DIR}/deploy/dashboard-soak.service" \
     "${APP_HOME}/.config/systemd/user/dashboard-soak.service"
-install -o "$APP_USER" -g "$APP_GROUP" -m 0755 \
+chmod 0755 \
     "${APP_DIR}/deploy/kiosk.sh" \
     "${APP_DIR}/deploy/display-setup.sh" \
     "${APP_DIR}/deploy/soak_monitor.sh"
