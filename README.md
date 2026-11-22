@@ -45,6 +45,15 @@ interval, serves `output/` on the configured host/port, and exposes
 URL-free source health at `/healthz`. The cached page is rendered before
 network refreshes begin.
 
+- **Color palette page:** while the dashboard is running, open
+  `http://<pi-address>:8080/static/colors.html` to see every color in
+  `config/colors.yaml` drawn the way the calendar uses it (multi-day bar,
+  confirmed event, tentative event), with text-contrast checks. Edit swatches,
+  add or delete colors, then copy or download the generated YAML and replace
+  `config/colors.yaml`, then restart `dashboard.service`. The page does not write
+  files itself. Calendars refer to colors by name via `color:` in
+  `config/config.yaml`.
+
 - `python -m dashboard doctor` checks the configuration, source connectivity,
   timezone/NTP, free disk space, and rendered page without printing feed URLs.
 - Raspberry Pi OS Bookworm deployment and kiosk setup are documented in
