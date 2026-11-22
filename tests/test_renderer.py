@@ -226,6 +226,7 @@ def test_render_output_writes_contract_json_page_and_local_assets(
     assert "window.DASHBOARD_CONFIG" in html
     assert (output_path / "static" / "dashboard.css").is_file()
     assert (output_path / "static" / "dashboard.js").is_file()
+    assert (output_path / "static" / "colors.html").is_file()
     assert (output_path / "static" / "icons" / "rain.svg").is_file()
 
 
